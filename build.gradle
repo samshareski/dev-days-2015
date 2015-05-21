@@ -1,0 +1,14 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+sourceCompatibility = 1.5
+version = '1.0'
+
+repositories {
+    mavenLocal()
+    maven { url "http://nexus:8081/nexus/content/groups/public" }
+}
+
+dependencies {
+    testCompile group: 'org.testng', name: 'testng', version: '6.8.1'
+}
