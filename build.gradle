@@ -10,5 +10,8 @@ repositories {
 }
 
 dependencies {
+    compile group: 'io.reactivex', name: 'rxjava', version: '1.0.11'
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.16.4'
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.12'
     testCompile group: 'org.testng', name: 'testng', version: '6.8.1'
 }
