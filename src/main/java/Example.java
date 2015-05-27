@@ -1,18 +1,54 @@
-import intrayobjects.BoardInfo;
-import intrayobjects.EisTask;
-import intrayobjects.EisUser;
-import intrayobjects.EisUserMetrics;
+import intrayobjects.*;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import rx.Observable;
+import rx.Subscription;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @SuppressWarnings("unused")
 public class Example {
 
+  @SneakyThrows
   public static void main(String[] args) {
+    log.info("Starting");
 
+    Observable<EisUser> userObservable = retrieveUser();
+
+    Observable<EisUserMetrics> metricsObservable =
+        userObservable
+        .flatMap(Example::retrieveMetrics);
+
+    Observable<List<BoardInfo>> boardObservable =
+        userObservable
+        .flatMap(Example::retrieveBoards);
+
+    Observable<EisTask> otherTasks =
+        userObservable
+        .flatMap(Example::retrieveTasks);
+
+    Observable<EisTask> priorityTasks =
+        otherTasks
+        .filter(task -> task.getPriority() == 0);
+
+    Observable<List<EisTask>> taskObservable =
+        priorityTasks
+        .concatWith(otherTasks)
+        .distinct()
+        .buffer(10)
+        .first();
+
+    Subscription subscription = Observable.zip(userObservable, taskObservable, metricsObservable, boardObservable,
+        (user, tasks, metrics, boards) -> new Intray(user, metrics, tasks, boards))
+        .subscribe(intray -> log.info(intray.toString()));
+
+    while (!subscription.isUnsubscribed()) {
+      Thread.sleep(100);
+    }
   }
 
   public static Observable<EisUser> retrieveUser() {
@@ -20,8 +56,32 @@ public class Example {
   }
 
   public static Observable<EisTask> retrieveTasks(EisUser user) {
-    return Observable.range(1, 100)
-        .map(i -> new EisTask(i, Math.random() > 0.5 ? 0 : 1))
+    List<EisTask> taskList = Arrays.asList(new EisTask(1, 0),
+        new EisTask(2, 0),
+        new EisTask(3, 1),
+        new EisTask(4, 1),
+        new EisTask(5, 1),
+        new EisTask(6, 0),
+        new EisTask(7, 0),
+        new EisTask(8, 1),
+        new EisTask(9, 1),
+        new EisTask(10, 1),
+        new EisTask(11, 0),
+        new EisTask(12, 1),
+        new EisTask(13, 1),
+        new EisTask(14, 1),
+        new EisTask(15, 1),
+        new EisTask(16, 1),
+        new EisTask(17, 1),
+        new EisTask(18, 1),
+        new EisTask(19, 1),
+        new EisTask(20, 1),
+        new EisTask(21, 1),
+        new EisTask(22, 1),
+        new EisTask(23, 1),
+        new EisTask(24, 1),
+        new EisTask(25, 1));
+    return Observable.from(taskList)
         .delay(i -> Observable.empty().delay(
             Math.round(Math.random() * 5000), TimeUnit.MILLISECONDS));
   }
@@ -32,12 +92,12 @@ public class Example {
   }
 
   public static Observable<List<BoardInfo>> retrieveBoards(EisUser user) {
-    return Observable.range(1, 100)
+    return Observable.range(1, 10)
         .filter(i -> Math.random() > 0.5)
         .map(i -> new BoardInfo(i, "Board #" + i.toString(), "Person #" + i.toString()))
         .delay(i -> Observable.empty().delay(
             Math.round(Math.random() * 5000), TimeUnit.MILLISECONDS))
-        .reduce(new ArrayList<>(), (accumlator, boardInfo) -> {
+        .reduce(new ArrayList<BoardInfo>(), (accumlator, boardInfo) -> {
           accumlator.add(boardInfo);
           return accumlator;
         });

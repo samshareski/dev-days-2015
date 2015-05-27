@@ -12,4 +12,13 @@ public class Intray {
   private final List<EisTask> eisTasks;
   private final List<BoardInfo> boardInfo;
 
+  @Override
+  public String toString() {
+    return "Intray(\n" +
+        eisUser.toString() + "\n" +
+        eisUserMetrics.toString() + "\n" +
+        boardInfo.toString() + "\n" +
+        eisTasks.toString().replaceAll("\\), ", "),\n") + ")";
+  }
+
 }
