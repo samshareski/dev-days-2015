@@ -1,4 +1,7 @@
-import intrayobjects.*;
+import intrayobjects.BoardInfo;
+import intrayobjects.EisTask;
+import intrayobjects.EisUser;
+import intrayobjects.EisUserMetrics;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import rx.Observable;
@@ -15,36 +18,9 @@ public class Example {
 
   @SneakyThrows
   public static void main(String[] args) {
-    log.info("Starting");
-
     Observable<EisUser> userObservable = retrieveUser();
 
-    Observable<EisUserMetrics> metricsObservable =
-        userObservable
-        .flatMap(Example::retrieveMetrics);
-
-    Observable<List<BoardInfo>> boardObservable =
-        userObservable
-        .flatMap(Example::retrieveBoards);
-
-    Observable<EisTask> otherTasks =
-        userObservable
-        .flatMap(Example::retrieveTasks);
-
-    Observable<EisTask> priorityTasks =
-        otherTasks
-        .filter(task -> task.getPriority() == 0);
-
-    Observable<List<EisTask>> taskObservable =
-        priorityTasks
-        .concatWith(otherTasks)
-        .distinct()
-        .buffer(10)
-        .first();
-
-    Subscription subscription = Observable.zip(userObservable, taskObservable, metricsObservable, boardObservable,
-        (user, tasks, metrics, boards) -> new Intray(user, metrics, tasks, boards))
-        .subscribe(intray -> log.info(intray.toString()));
+    Subscription subscription = null;
 
     while (!subscription.isUnsubscribed()) {
       Thread.sleep(100);
