@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import rx.Observable;
 import rx.Subscription;
 
+import java.util.List;
+
 
 @Slf4j
 @SuppressWarnings("unused")
@@ -13,7 +15,34 @@ public class Example {
   public static void main(String[] args) {
     Observable<EisUser> userObservable = retrieveUser();
 
-    Subscription subscription = null;
+    Observable<EisUserMetrics> metricsObservable =
+      userObservable
+        .flatMap(user -> retrieveMetrics(user));
+
+    Observable<List<BoardInfo>> boardObservable =
+      userObservable
+        .flatMap(user -> retrieveBoards(user))
+        .take(10)
+        .toList();
+
+    Observable<EisTask> allTasks =
+      userObservable
+        .flatMap(user -> retrieveTasks(user));
+
+    Observable<List<EisTask>> taskObservable =
+      allTasks
+        .filter(task -> task.getPriority() == 0)
+        .concatWith(allTasks)
+        .distinct()
+        .take(10)
+        .toList();
+
+    Subscription subscription = Observable.zip(
+      userObservable, metricsObservable,
+      taskObservable, boardObservable,
+      (user, metric, tasks, boards) ->
+        new Dashboard(user, metric, tasks, boards)
+    ).subscribe(dashboard -> log.info(dashboard.toString()));
 
     while (!subscription.isUnsubscribed()) {
       Thread.sleep(100);
