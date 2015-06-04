@@ -17,7 +17,7 @@ public class Dashboard {
     return "Dashboard(\n" +
       eisUser.toString() + "\n" +
       eisUserMetrics.toString() + "\n" +
-      boardInfo.toString() + "\n" +
+      boardInfo.toString().replaceAll("\\), ", "),\n") + "\n" +
       eisTasks.toString().replaceAll("\\), ", "),\n") + ")";
   }
 
