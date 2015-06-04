@@ -22,7 +22,7 @@ public class Example {
     Observable<List<BoardInfo>> boardObservable =
       userObservable
         .flatMap(user -> retrieveBoards(user))
-        .take(10)
+        .take(5)
         .toList();
 
     Observable<EisTask> allTasks =
@@ -40,8 +40,8 @@ public class Example {
     Subscription subscription = Observable.zip(
       userObservable, metricsObservable,
       taskObservable, boardObservable,
-      (user, metric, tasks, boards) ->
-        new Dashboard(user, metric, tasks, boards)
+      (user, metrics, tasks, boards) ->
+        new Dashboard(user, metrics, tasks, boards)
     ).subscribe(dashboard -> log.info(dashboard.toString()));
 
     while (!subscription.isUnsubscribed()) {
