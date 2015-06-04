@@ -49,16 +49,12 @@ public class ExampleObservables {
       .delay(Math.round(Math.random() * 5000), TimeUnit.MILLISECONDS);
   }
 
-  public static Observable<List<BoardInfo>> retrieveBoards(EisUser user) {
+  public static Observable<BoardInfo> retrieveBoards(EisUser user) {
     return Observable.range(1, 10)
       .filter(i -> Math.random() > 0.5)
       .map(i -> new BoardInfo(i, "Board #" + i.toString(), "Person #" + i.toString()))
       .delay(i -> Observable.empty().delay(
-        Math.round(Math.random() * 5000), TimeUnit.MILLISECONDS))
-      .reduce(new ArrayList<BoardInfo>(), (accumlator, boardInfo) -> {
-        accumlator.add(boardInfo);
-        return accumlator;
-      });
+        Math.round(Math.random() * 5000), TimeUnit.MILLISECONDS));
   }
 
 }

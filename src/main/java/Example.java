@@ -1,10 +1,9 @@
-import dashboardobjects.EisUser;
+import dashboardobjects.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import rx.Observable;
 import rx.Subscription;
 
-import static dashboardobjects.ExampleObservables.*;
 
 @Slf4j
 @SuppressWarnings("unused")
@@ -20,5 +19,22 @@ public class Example {
       Thread.sleep(100);
     }
   }
+
+  private static Observable<EisUser> retrieveUser() {
+    return ExampleObservables.retrieveUser();
+  }
+
+  private static Observable<EisTask> retrieveTasks(EisUser user) {
+    return ExampleObservables.retrieveTasks(user);
+  }
+
+  private static Observable<EisUserMetrics> retrieveMetrics(EisUser user) {
+    return ExampleObservables.retrieveMetrics(user);
+  }
+
+  private static Observable<BoardInfo> retrieveBoards(EisUser user) {
+    return ExampleObservables.retrieveBoards(user);
+  }
+
 
 }
