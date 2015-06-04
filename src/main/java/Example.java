@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import rx.Observable;
 import rx.Subscription;
 
-import static dashboardobjects.ExampleObservables.retrieveUser;
+import static dashboardobjects.ExampleObservables.*;
 
 @Slf4j
 @SuppressWarnings("unused")
