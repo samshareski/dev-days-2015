@@ -1,11 +1,11 @@
-package intrayobjects;
+package dashboardobjects;
 
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class Intray {
+public class Dashboard {
 
   private final EisUser eisUser;
   private final EisUserMetrics eisUserMetrics;
@@ -14,11 +14,11 @@ public class Intray {
 
   @Override
   public String toString() {
-    return "Intray(\n" +
-        eisUser.toString() + "\n" +
-        eisUserMetrics.toString() + "\n" +
-        boardInfo.toString() + "\n" +
-        eisTasks.toString().replaceAll("\\), ", "),\n") + ")";
+    return "Dashboard(\n" +
+      eisUser.toString() + "\n" +
+      eisUserMetrics.toString() + "\n" +
+      boardInfo.toString() + "\n" +
+      eisTasks.toString().replaceAll("\\), ", "),\n") + ")";
   }
 
 }
